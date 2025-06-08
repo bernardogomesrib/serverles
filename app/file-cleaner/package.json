@@ -1,0 +1,9 @@
+{
+  "name": "file-cleaner",
+  "version": "1.0.0",
+  "description": "Cleans up old files from S3 bucket",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.1588.0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+    "name": "image-processor",
+    "version": "1.0.0",
+    "description": "Converts image to grayscale and uploads to S3",
+    "main": "index.js",
+    "dependencies": {
+      "aws-sdk": "^2.1588.0",
+      "jimp": "^0.22.10",
+      "uuid": "^9.0.1"
+    }
+  }
+  

@@ -6,12 +6,18 @@ services:
     container_name: localstack
     ports:
       - "4566:4566"
+      - "4510-4559:4510-4559"
     environment:
-      - SERVICES=lambda,s3
+      - SERVICES=lambda,s3,events,iam
       - DEBUG=1
-      - LAMBDA_EXECUTOR=docker
+      - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_DEFAULT_REGION=us-east-1
+      - BUCKET_NAME=image-processing-results
+      # Variavel que será lida do arquivo .env
+      - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME:-localhost}
     volumes:
       - ./app:/app
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./init-localstack.sh:/docker-entrypoint-initaws.d/init-localstack.sh:ro
+      - ./init-localstack.sh:/etc/localstack/init/ready.d/init-localstack.sh
+    env_file:
+      - .env
