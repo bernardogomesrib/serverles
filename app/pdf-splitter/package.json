@@ -1,0 +1,11 @@
+{
+  "name": "pdf-splitter",
+  "version": "1.0.0",
+  "description": "Splits a PDF based on ranges or selected pages.",
+  "main": "index.js",
+  "dependencies": {
+    "aws-sdk": "^2.1588.0",
+    "pdf-lib": "^1.17.1",
+    "uuid": "^9.0.1"
+  }
+}

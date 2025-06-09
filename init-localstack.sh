@@ -2,7 +2,9 @@
 set -e
 
 ENDPOINT_URL=http://localhost:4566
-BUCKET_NAME=${BUCKET_NAME:-image-processing-results}
+# Usando o nome da sua pasta para a função de compressão
+COMPRESSION_FUNCTION_NAME="pdf-compression"
+COMPRESSION_APP_DIR="/app/$COMPRESSION_FUNCTION_NAME"
 
 echo "Waiting for AWS services to be ready..."
 until awslocal s3api list-buckets --endpoint-url="$ENDPOINT_URL" >/dev/null 2>&1; do
@@ -13,14 +15,17 @@ echo -e "\nServices are ready."
 
 echo "Starting AWS resources creation..."
 
-echo "Creating S3 bucket: $BUCKET_NAME"
-awslocal s3 mb "s3://$BUCKET_NAME" --endpoint-url="$ENDPOINT_URL"
-
-echo "Applying public read policy to bucket $BUCKET_NAME"
-awslocal s3api put-bucket-policy --bucket "$BUCKET_NAME" --endpoint-url="$ENDPOINT_URL" --policy '{
+# --- 1. Criação do Bucket S3 ---
+echo "--- Creating S3 bucket ---"
+awslocal s3 mb "s3://${BUCKET_NAME:-processing-results}" --endpoint-url="$ENDPOINT_URL"
+awslocal s3api put-bucket-policy --bucket "${BUCKET_NAME:-processing-results}" --endpoint-url="$ENDPOINT_URL" --policy '{
     "Version": "2012-10-17",
-    "Statement": [ { "Sid": "PublicReadGetObject", "Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::'"$BUCKET_NAME"'/*" } ]
+    "Statement": [ { "Sid": "PublicReadGetObject", "Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::'"${BUCKET_NAME:-processing-results}"'/*" } ]
 }'
+
+
+
+
 
 echo "Creating image processor Lambda function..."
 cd /app/image-processor
@@ -33,6 +38,30 @@ awslocal lambda create-function \
     --zip-file fileb://function.zip \
     --environment "Variables={BUCKET_NAME=$BUCKET_NAME,PUBLIC_HOSTNAME=$PUBLIC_HOSTNAME}" \
     --endpoint-url="$ENDPOINT_URL"
+
+cd /app/pdf-merger
+zip -r function.zip . > /dev/null
+awslocal lambda create-function \
+    --function-name pdf-merger \
+    --runtime nodejs18.x \
+    --role arn:aws:iam::000000000000:role/lambda-ex \
+    --handler index.handler \
+    --zip-file fileb://function.zip \
+    --environment "Variables={BUCKET_NAME=$BUCKET_NAME,PUBLIC_HOSTNAME=$PUBLIC_HOSTNAME}" \
+    --endpoint-url="$ENDPOINT_URL"
+
+cd /app/pdf-splitter
+zip -r function.zip . > /dev/null
+awslocal lambda create-function \
+    --function-name pdf-splitter \
+    --runtime nodejs18.x \
+    --role arn:aws:iam::000000000000:role/lambda-ex \
+    --handler index.handler \
+    --zip-file fileb://function.zip \
+    --environment "Variables={BUCKET_NAME=$BUCKET_NAME,PUBLIC_HOSTNAME=$PUBLIC_HOSTNAME}" \
+    --endpoint-url="$ENDPOINT_URL"
+
+
 
 echo "Creating file cleaner Lambda function..."
 cd /app/file-cleaner
