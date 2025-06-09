@@ -12,7 +12,7 @@ services:
       - DEBUG=1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - AWS_DEFAULT_REGION=us-east-1
-      - BUCKET_NAME=processing-results
+      - BUCKET_NAME=${BUCKET_NAME}
       # Variavel que será lida do arquivo .env
       - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME:-localhost}
     volumes:
@@ -21,3 +21,29 @@ services:
       - ./init-localstack.sh:/etc/localstack/init/ready.d/init-localstack.sh
     env_file:
       - .env
+  api:
+    build: ./app/pdf-compression
+    image: python-ghostscript-api
+    ports:
+      - "5001:5000"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - S3_BUCKET=${BUCKET_NAME}
+      - S3_ENDPOINT_URL=http://localstack:4566
+      - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+  pdf-to-word-api:
+    build: ./app/pdf-to-word # Aponta para a nova pasta
+    image: python-ocr-word-api
+    ports:
+      - "5002:5000" # Usa uma nova porta na sua máquina
+    depends_on:
+      - localstack
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+      - S3_BUCKET_NAME=${BUCKET_NAME}
+      - S3_ENDPOINT_URL=http://localstack:4566
+      - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}

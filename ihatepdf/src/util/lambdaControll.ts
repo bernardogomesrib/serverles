@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
-import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
 
 // --- Tipos ---
 // Resposta genérica da Lambda, agora com todos os campos possíveis
@@ -17,9 +17,9 @@ type LambdaResponse = {
 
 type ResponsePayload = {
   statusCode: number;
-  body: string| ObjectResponse;
+  body: string | ObjectResponse;
 };
-type ObjectResponse ={
+type ObjectResponse = {
   message: string;
   zipUrl?: string;
   totalCompressedSize?: number;
@@ -114,19 +114,74 @@ export async function splitPdf(
 }
 
 /**
- * Invoca a função Lambda 'pdf-compressor'.
+ * Invoca a API de compressão de PDF.
  * @param files Um array de objetos, cada um contendo o PDF, nome, tamanho e rotação.
  * @param compressionLevel O nível de compressão selecionado pelo utilizador.
- * @returns Uma promessa que resolve para a resposta da Lambda, contendo o URL do ZIP e as estatísticas de compressão.
+ * @returns Uma promessa que resolve para a resposta da API, contendo o URL do ZIP e as estatísticas de compressão.
  */
 export async function compressPdfs(
   files: CompressFilePayload[],
   compressionLevel: CompressionLevel
 ): Promise<LambdaResponse> {
-  // O payload corresponde exatamente ao que a função `pdf-compressor/index.js` espera.
+
   const payload = {
-    files,
+    filesPayload: files, // <--- Correção 1 já aplicada
     compressionLevel,
   };
-  return invokeLambda("pdf-compression", payload);
+
+  const result = await fetch(`http://${process.env.NEXT_PUBLIC_API_HOSTNAME || "localhost"}:5001/process_pdfs`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!result.ok) {
+    // Se a resposta não for OK (ex: 400, 500), tenta extrair o erro
+    const errorData = await result.json();
+    const errorBody = JSON.parse(errorData.body || '{}');
+    throw new Error(errorBody.error || `HTTP error! status: ${result.status}`);
+  }
+
+  // --- Correção 2: Tratamento da resposta de sucesso ---
+  const responsePayload = await result.json();
+
+  // O 'body' vem como uma string JSON, então precisamos parseá-lo.
+  const finalData = JSON.parse(responsePayload.body);
+
+  // A API agora retorna 'url', vamos mapear para 'zipUrl' se necessário pelo front-end
+  if (finalData.url && !finalData.zipUrl) {
+    finalData.zipUrl = finalData.url;
+  }
+
+  return finalData as LambdaResponse;
+}
+
+
+export async function toWord(
+  files: PdfFilePayload[],
+  ocrEnabled: boolean
+): Promise<LambdaResponse> {
+
+  
+const payload = {
+    files,
+    ocrEnabled,
+  };
+
+
+   const result = await fetch(`http://${process.env.NEXT_PUBLIC_API_HOSTNAME || "localhost"}:5002/convert`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  console.log(result);
+  if (!result.ok) {
+    const errorData = await result.json();
+    const errorBody = JSON.parse(errorData.body || '{}');
+    throw new Error(errorBody.error || `HTTP error! status: ${result.status}`);
+  }
+  
+  const responsePayload = await result.json();
+  return responsePayload as LambdaResponse;
 }

@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "pdfjs-dist": "^5.3.31"
-  },
-  "devDependencies": {
-    "@types/pdfjs-dist": "^2.10.377"
-  }
-}

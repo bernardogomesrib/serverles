@@ -1,8 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { compressPdfs } from '@/util/lambdaControll';
-import { RotateCw, Trash2, Download, Loader2, FileSymlink, Zap, Shield, ChevronsRight, Plus } from 'lucide-react';
+import { ChevronsRight, Download, FileSymlink, Loader2, Plus, RotateCw, Shield, Trash2, Zap } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 // --- Tipos ---
 type PdfFile = {
@@ -101,7 +101,7 @@ export default function CompressPdfPage() {
             );
             const res = await compressPdfs(filesPayload, compressionLevel);
             console.log("Resposta da compressão:", res);
-            if (res.zipUrl) { 
+            if (res.zipUrl) {
                 setResult({ zipUrl: res.zipUrl, totalOriginalSize: res.totalOriginalSize!, totalCompressedSize: res.totalCompressedSize! }); setUiState('completed');
             }
             else { throw new Error(res.error || "A resposta da Lambda foi inválida."); }
@@ -111,15 +111,15 @@ export default function CompressPdfPage() {
     // --- Renderização ---
     const renderContent = () => {
         switch (uiState) {
-            case 'initial': return (<div className="text-center"><h1 className="text-4xl font-bold">Comprimir arquivo PDF</h1><p className="text-xl text-gray-500 mt-4">Reduza o tamanho do arquivo PDF.</p><button onClick={() => fileInputRef.current?.click()} className="mt-8 bg-red-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-red-700">Selecionar Arquivos PDF</button></div>);
+            case 'initial': return (<div className="text-center"><h1 className="text-4xl font-bold text-gray-800">Comprimir arquivo PDF</h1><p className="text-xl text-gray-500 mt-4">Reduza o tamanho do arquivo PDF.</p><button onClick={() => fileInputRef.current?.click()} className="mt-8 bg-red-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-red-700">Selecionar Arquivos PDF</button></div>);
             case 'filesSelected': return (
                 <div className="flex w-full h-full">
                     <div className="flex-1 p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 overflow-y-auto">
                         {files.map(f => (
                             <div key={f.id} className="group relative border-2 bg-white p-1 rounded-lg flex flex-col items-center justify-between aspect-[3/4] transition-all shadow-md hover:shadow-xl border-gray-200">
                                 <div className="absolute top-1 right-1 z-10 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => rotateFile(f.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><RotateCw size={18} /></button>
-                                    <button onClick={() => removeFile(f.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><Trash2 size={18} /></button>
+                                    <button title="Rodar PDF" onClick={() => rotateFile(f.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><RotateCw size={18} /></button>
+                                    <button title="excluir PDF" onClick={() => removeFile(f.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><Trash2 size={18} /></button>
                                 </div>
                                 <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-md bg-gray-100">
                                     {f.thumbnailUrl ? (
@@ -131,11 +131,11 @@ export default function CompressPdfPage() {
                                 <p className="mt-2 text-xs font-semibold text-gray-700 w-full text-center truncate px-1" title={f.file.name}>{f.file.name}</p>
                             </div>
                         ))}
-                        <button onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 text-gray-500 rounded-lg flex flex-col items-center justify-center aspect-[3/4] hover:border-red-500 hover:bg-red-50 transition-all">
+                        <button title="adicionar pdf" onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 text-gray-500 rounded-lg flex flex-col items-center justify-center aspect-[3/4] hover:border-red-500 hover:bg-red-50 transition-all">
                             <Plus size={40} />
                         </button>
                     </div>
-                    <aside className="w-80 border-l p-4 flex flex-col">
+                    <aside className="w-80 border-l p-4 flex flex-col text-gray-800">
                         <h3 className="text-lg font-bold text-center">Nível de Compressão</h3>
                         <div className="my-4 space-y-2">
                             <CompressionOption level="extreme" icon={Zap} title="Compressão Extrema" current={compressionLevel} set={setCompressionLevel} />
@@ -146,16 +146,16 @@ export default function CompressPdfPage() {
                     </aside>
                 </div>
             );
-            case 'compressing': return <div className="flex justify-center items-center h-full"><Loader2 className="animate-spin" size={48} /><p className="ml-4 text-lg">A comprimir...</p></div>;
+            case 'compressing': return <div className="flex justify-center items-center h-full text-gray-800"><Loader2 className="animate-spin" size={48} /><p className="ml-4 text-lg">A comprimir...</p></div>;
             case 'completed':
                 if (!result) return null;
                 const { zipUrl, totalOriginalSize, totalCompressedSize } = result;
                 const percentage = totalOriginalSize > 0 ? Math.round(((totalOriginalSize - totalCompressedSize) / totalOriginalSize) * 100) : 0;
                 return (
-                    <div className="text-center">
+                    <div className="text-center text-gray-800">
                         <h1 className="text-4xl font-bold">PDFs comprimidos!</h1>
                         <div className="my-8 flex justify-center items-center"><div className="relative w-32 h-32"><svg className="w-full h-full" viewBox="0 0 36 36"><path className="text-gray-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="3"></path><path className="text-red-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" strokeWidth="3" strokeDasharray={`${percentage}, 100`} strokeLinecap="round"></path></svg><div className="absolute inset-0 flex flex-col items-center justify-center"><span className="text-3xl font-bold">{percentage}%</span><span className="text-sm">POUPADO</span></div></div><div className="ml-8 text-left"><p className="text-lg">Os seus PDFs estão agora <strong>{percentage}%</strong> mais pequenos!</p><p className="text-gray-500">{formatBytes(totalOriginalSize)} <ChevronsRight className="inline-block" /> {formatBytes(totalCompressedSize)}</p></div></div>
-                        <a href={zipUrl} download className="bg-red-600 text-white font-bold px-8 py-4 rounded-lg inline-block mb-4 hover:bg-red-700"><Download className="inline-block mr-2" />Baixar PDFs Comprimidos</a>
+                        <a href={zipUrl} download target="_blank" rel="noopener noreferrer" className="bg-red-600 text-white font-bold px-8 py-4 rounded-lg inline-block mb-4 hover:bg-red-700"><Download className="inline-block mr-2" />Baixar PDFs Comprimidos</a>
                         <button onClick={handleReset} className="block mx-auto text-red-600 font-semibold"><FileSymlink className="inline-block mr-1" size={16} />Comprimir mais PDFs</button>
                     </div>
                 );

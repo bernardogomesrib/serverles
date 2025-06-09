@@ -1,8 +1,8 @@
 'use client';
 
 import { converterImagem } from "@/util/lambdaControll";
-import { useState, useRef } from "react";
-import { UploadCloud, FileImage, CheckCircle2, XCircle, Trash2, AlertTriangle } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileImage, Trash2, UploadCloud, XCircle } from "lucide-react";
+import { useRef, useState } from "react";
 
 // Define a estrutura para cada arquivo que será processado
 type ProcessFile = {
@@ -140,10 +140,11 @@ export default function BlackAndWhiteConverterPage() {
                                         <div className="flex items-center space-x-3 w-auto">
                                             {item.status === 'completed' && (
                                                 <>
-                                                    <a href={item.convertedUrl} target="_blank" rel="noopener noreferrer" className="text-green-600 font-semibold text-sm inline-flex items-center hover:text-green-700">
+                                                    <a href={item.convertedUrl} download target="_blank"
+                                                        rel="noopener noreferrer" className="text-green-600 font-semibold text-sm inline-flex items-center hover:text-green-700">
                                                         <CheckCircle2 className="h-4 w-4 mr-1" /> Baixar
                                                     </a>
-                                                    <button onClick={() => removeFile(item.id)} className="text-gray-400 hover:text-red-600">
+                                                    <button title="remover arquivo" onClick={() => removeFile(item.id)} className="text-gray-400 hover:text-red-600">
                                                         <Trash2 className="h-5 w-5" />
                                                     </button>
                                                 </>
@@ -154,7 +155,7 @@ export default function BlackAndWhiteConverterPage() {
                                                 </button>
                                             )}
                                             {item.status === 'pending' && !isConverting && (
-                                                <button onClick={() => removeFile(item.id)} className="text-gray-400 hover:text-red-600">
+                                                <button title="remover arquivo" onClick={() => removeFile(item.id)} className="text-gray-400 hover:text-red-600">
                                                     <Trash2 className="h-5 w-5" />
                                                 </button>
                                             )}

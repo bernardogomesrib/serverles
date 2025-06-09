@@ -24,9 +24,6 @@ awslocal s3api put-bucket-policy --bucket "${BUCKET_NAME:-processing-results}" -
 }'
 
 
-
-
-
 echo "Creating image processor Lambda function..."
 cd /app/image-processor
 zip -r function.zip . > /dev/null

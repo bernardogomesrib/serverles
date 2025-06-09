@@ -11,12 +11,19 @@ done
 
 echo "Criando função Lambda bw-converter..."
 aws --endpoint-url=http://localhost:4566 lambda create-function \
-  --function-name bw-converter \
-  --runtime nodejs18.x \
-  --handler index.handler \
+  --function-name pdf-compression \
+  --runtime python3.11 \
+  --handler main.handler \
   --role arn:aws:iam::000000000000:role/lambda-role \
-  --zip-file fileb://app/function.zip \
-  --region us-east-1
+  --zip-file fileb://app/pdf-compression/function.zip \
+  --region us-east-1 \
+  --layers arn:aws:lambda:us-east-1:764866452798:layer:ghostscript:18 \
+
+aws --endpoint-url=http://localhost:4566 lambda delete-function \
+  --function-name pdf-compression
+
+
+
 
 echo "Função Lambda criada!"
 

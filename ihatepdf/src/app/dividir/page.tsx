@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useState, useRef, useEffect, useMemo } from 'react';
 import { splitPdf } from '@/util/lambdaControll';
-import {  Check, Plus, Download, Loader2, Scissors, X, FileSymlink } from 'lucide-react';
+import { Check, Download, FileSymlink, Loader2, Plus, Scissors, X } from 'lucide-react';
 import type { PDFDocumentProxy } from 'pdfjs-dist';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 // --- Tipos ---
 type PageInfo = { pageNumber: number; thumbnailUrl: string; };
@@ -160,7 +160,7 @@ export default function SplitPdfPage() {
             case 'initial':
                 return (
                     <div className="flex flex-col items-center justify-center h-full">
-                        <h1 className="text-4xl font-bold">Dividir arquivo PDF</h1>
+                        <h1 className="text-gray-800 text-4xl font-bold">Dividir arquivo PDF</h1>
                         <p className="text-xl text-gray-500 mt-4">Separe uma ou várias páginas do seu PDF.</p>
                         <button onClick={() => fileInputRef.current?.click()} className="mt-8 bg-red-600 text-white font-bold px-8 py-4 rounded-lg hover:bg-red-700">Selecionar arquivo PDF</button>
                     </div>
@@ -177,6 +177,7 @@ export default function SplitPdfPage() {
                                 <a
                                     key={i}
                                     href={url}
+                                    download
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="bg-green-600 text-white py-3 px-6 rounded-lg flex items-center justify-center text-md hover:bg-green-700"
@@ -226,16 +227,16 @@ export default function SplitPdfPage() {
 
                         {/* Painel de Controlo */}
                         <aside className="w-80 border-l bg-white flex flex-col p-4">
-                            <h2 className="text-xl font-bold text-center">Dividir PDF</h2>
-                            <div className="flex justify-center my-4 border border-gray-200 rounded-lg p-1">
+                            <h2 className="text-4xl font-bold text-gray-800 text-center">Dividir PDF</h2>
+                            <div className="flex justify-center my-4 border border-gray-200 rounded-lg p-1 text-gray-800">
                                 <button onClick={() => setMode('range')} className={`flex-1 py-2 text-sm rounded-md ${mode === 'range' ? 'bg-gray-200 font-semibold' : ''}`}>Por Intervalo</button>
                                 <button onClick={() => setMode('extract')} className={`flex-1 py-2 text-sm rounded-md ${mode === 'extract' ? 'bg-gray-200 font-semibold' : ''}`}>Extrair Páginas</button>
                             </div>
                             {mode === 'range' && (
-                                <div className="space-y-4 overflow-y-auto">
+                                <div className="space-y-4 overflow-y-auto text-gray-800">
                                     {ranges.map((range, index) => (
                                         <div key={range.id} className="p-3 border rounded-lg">
-                                            <div className="flex justify-between items-center mb-2"><span className="font-semibold text-sm">Intervalo {index + 1}</span>{ranges.length > 1 && <button onClick={() => removeRange(range.id)} className="text-gray-400 hover:text-red-500"><X size={18} /></button>}</div>
+                                            <div className="flex justify-between items-center mb-2"><span className="font-semibold text-sm">Intervalo {index + 1}</span>{ranges.length > 1 && <button title="remover intervalo" onClick={() => removeRange(range.id)} className="text-gray-400 hover:text-red-500"><X size={18} /></button>}</div>
                                             <div className="flex items-center justify-between space-x-2"><input type="number" value={range.from} onChange={e => updateRange(range.id, 'from', +e.target.value)} className="w-full border p-1 rounded-md text-center" /><span>a</span><input type="number" value={range.to} onChange={e => updateRange(range.id, 'to', +e.target.value)} className="w-full border p-1 rounded-md text-center" /></div>
                                         </div>
                                     ))}
@@ -244,7 +245,7 @@ export default function SplitPdfPage() {
                             )}
                             {mode === 'extract' && <div className="text-center text-sm text-gray-600"><p>Selecione as páginas que deseja extrair.</p><p className="font-bold mt-2">{selectedPages.size} páginas selecionadas</p></div>}
                             <div className="mt-auto space-y-4">
-                                <label className="flex items-center text-sm"><input type="checkbox" checked={mergeOutput} onChange={e => setMergeOutput(e.target.checked)} className="mr-2 h-4 w-4" />Juntar tudo num único arquivo PDF</label>
+                                <label className="flex items-center text-sm text-gray-800"><input type="checkbox" checked={mergeOutput} onChange={e => setMergeOutput(e.target.checked)} className="mr-2 h-4 w-4 text-gray-800" />Juntar tudo num único arquivo PDF</label>
                                 <button onClick={handleSplit} disabled={uiState === 'processing' || pagesToExtract.size === 0} className="w-full bg-red-600 text-white font-bold py-3 rounded-lg flex items-center justify-center disabled:opacity-50">
                                     {uiState === 'processing' ? <Loader2 className="animate-spin" /> : <><Scissors size={18} className="mr-2" /> Dividir PDF</>}
                                 </button>

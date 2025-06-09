@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { juntarPdfs } from '@/util/lambdaControll';
-import { RotateCw, Trash2, Download, Loader2, Plus } from 'lucide-react';
+import { Download, Loader2, Plus, RotateCw, Trash2 } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 // Importa apenas os TIPOS estaticamente, o que é seguro no servidor.
 import type { PDFDocumentProxy } from 'pdfjs-dist';
 
@@ -176,8 +176,8 @@ export default function MergePdfPage() {
                             <div key={pdf.id} draggable onDragStart={() => handleDragStart(index)} onDragEnter={() => handleDragEnter(index)}
                                 className={`group relative border-2 bg-white p-1 rounded-lg flex flex-col items-center justify-between aspect-[3/4] transition-all cursor-grab shadow-md hover:shadow-xl ${draggedIndex === index ? 'border-red-500 scale-105 shadow-2xl' : 'border-gray-200'}`}>
                                 <div className="absolute top-1 right-1 z-10 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button onClick={() => rotateFile(pdf.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><RotateCw size={18} /></button>
-                                    <button onClick={() => removeFile(pdf.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><Trash2 size={18} /></button>
+                                    <button title="Girar PDF" onClick={() => rotateFile(pdf.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><RotateCw size={18} /></button>
+                                    <button title="Remover PDF" onClick={() => removeFile(pdf.id)} className="bg-white/80 backdrop-blur-sm p-2 rounded-full text-gray-700 hover:bg-gray-200"><Trash2 size={18} /></button>
                                 </div>
                                 <div className="w-full h-full flex items-center justify-center overflow-hidden rounded-md bg-gray-100">
                                     {pdf.thumbnailUrl ? (
@@ -190,7 +190,7 @@ export default function MergePdfPage() {
                             </div>
                         ))}
                         {uiState === 'filesSelected' && (
-                            <button onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 text-gray-500 rounded-lg flex flex-col items-center justify-center aspect-[3/4] hover:border-red-500 hover:bg-red-50 transition-all">
+                            <button title="Adicionar pdf" onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-300 text-gray-500 rounded-lg flex flex-col items-center justify-center aspect-[3/4] hover:border-red-500 hover:bg-red-50 transition-all">
                                 <Plus size={40} />
                             </button>
                         )}
@@ -199,7 +199,9 @@ export default function MergePdfPage() {
                         <div className="max-w-7xl mx-auto flex justify-end">
                             {uiState === 'filesSelected' && (<button onClick={handleMerge} disabled={files.length < 2} className="bg-red-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-red-700 disabled:opacity-50">Juntar PDF</button>)}
                             {uiState === 'merging' && (<div className="flex items-center justify-center bg-gray-700 text-white font-bold text-lg px-8 py-4 rounded-lg"><Loader2 className="animate-spin mr-3" size={24} />A juntar PDFs...</div>)}
-                            {uiState === 'completed' && mergedUrl && (<a href={mergedUrl} download target="_blank" className="bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-green-700"><Download className="inline-block mr-2" /> Baixar PDF Juntado</a>)}
+                            {uiState === 'completed' && mergedUrl && (<a href={mergedUrl}   download="merged.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer" className="bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-green-700"><Download className="inline-block mr-2" /> Baixar PDF</a>)}
                         </div>
                     </div>
                 </div>

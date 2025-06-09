@@ -23,7 +23,7 @@ export default function Navbar() {
       <div className="hidden md:flex items-center space-x-4">
         <Link href="/juntar" className="text-gray-600 hover:text-red-600">Juntar PDF</Link>
         <Link href="/dividir" className="text-gray-600 hover:text-red-600">Dividir PDF</Link>
-        <Link href="/pandb" className="text-gray-600 hover:text-red-600">Colorida para P&B</Link>
+        <Link href="/comprimir" className="text-gray-600 hover:text-red-600">Comprimir PDF</Link>
         <Link href="/" className="text-gray-600 font-semibold text-red-600 hover:text-red-700">Todas as ferramentas</Link>
       </div>
 
