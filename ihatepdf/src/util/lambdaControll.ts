@@ -41,7 +41,9 @@ export type CompressFilePayload = {
 // --- Cliente Lambda ---
 const lambdaClient = new LambdaClient({
   region: "us-east-1",
-  endpoint: `http://${process.env.PUBLIC_HOSTNAME || "localhost"}:4566`,
+  endpoint: `http://${
+    process.env.NEXT_PUBLIC_API_HOSTNAME || "localhost"
+  }:4566`,
   credentials: {
     accessKeyId: "test",
     secretAccessKey: "test",

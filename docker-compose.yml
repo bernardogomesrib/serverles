@@ -31,6 +31,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=test
       - AWS_DEFAULT_REGION=us-east-1
       - S3_BUCKET=${BUCKET_NAME}
+      - BUCKET_NAME=${BUCKET_NAME}
       - S3_ENDPOINT_URL=http://localstack:4566
       - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   pdf-to-word-api:
@@ -54,3 +55,4 @@ services:
       - "3000:3000"
     environment:
       - PUBLIC_IP=${PUBLIC_HOSTNAME}
+      - NEXT_PUBLIC_API_HOSTNAME=${PUBLIC_HOSTNAME}

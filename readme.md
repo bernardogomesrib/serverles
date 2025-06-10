@@ -36,3 +36,41 @@ LocalStack: Simulador da AWS local
 NextJS: Frontend com base em React
 Python: Algumas funções lambda e 2 backends usam a linguagem
 JavaScript: Algumas funções lambda utilizam
+
+# Telas Com funções
+
+![Screenshot1](screenshots/screenshot1.png)
+
+Tela inical do aplicativo que mostra as funções do app
+
+![Screenshot1](screenshots/screenshot2.png)
+
+Convertendo várias imagens de uma vez
+
+![Screenshot1](screenshots/screenshot3.png)
+
+Juntando pdfs
+
+![Screenshot1](screenshots/screenshot4.png)
+
+Dividindo pdfs usando intervalo de paginas
+
+![Screenshot1](screenshots/screenshot5.png)
+
+Dividindo pdf selecionando as paginas
+
+![Screenshot1](screenshots/screenshot6.png)
+
+Comprimindo pdfs
+
+![Screenshot1](screenshots/screenshot7.png)
+
+Realmente funciona e da feedback sobre o quanto comprimiu
+
+![Screenshot1](screenshots/screenshot8.png)
+
+Transformando arquivo pdf em word, é possivel também fazer a conversão de arquivos pdf que não são selecionaveis, o OCR é para isso
+
+![Screenshot1](screenshots/screenshot9.png)
+
+Colocando senha emvários pdfs ao mesmo tempo

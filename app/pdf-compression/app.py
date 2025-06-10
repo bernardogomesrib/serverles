@@ -17,7 +17,21 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 # --- Configuração do Cliente S3 (Boto3) ---
 S3_BUCKET = os.environ.get('BUCKET_NAME')
 S3_ENDPOINT_URL = os.environ.get('S3_ENDPOINT_URL')
-PUBLIC_HOSTNAME = os.environ.get('PUBLIC_HOSTNAME', 'localhost')
+PUBLIC_HOSTNAME = os.environ.get('PUBLIC_HOSTNAME' )
+
+if not S3_BUCKET:
+    raise ValueError("As variáveis de ambiente BUCKET_NAME deve ser definida.")
+if not S3_ENDPOINT_URL:
+    raise ValueError("A variável de ambiente S3_ENDPOINT_URL deve ser definida.")
+    
+
+if not PUBLIC_HOSTNAME:
+    raise ValueError("A variável de ambiente PUBLIC_HOSTNAME deve ser definida.")
+if not os.environ.get('AWS_ACCESS_KEY_ID') or not os.environ.get('AWS_SECRET_ACCESS_KEY'):
+    raise ValueError("As variáveis de ambiente AWS_ACCESS_KEY_ID e AWS_SECRET_ACCESS_KEY devem ser definidas.")
+
+
+
 
 s3_client = boto3.client(
     's3',
