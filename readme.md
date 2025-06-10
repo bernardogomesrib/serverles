@@ -73,4 +73,4 @@ Transformando arquivo pdf em word, é possivel também fazer a conversão de arq
 
 ![Screenshot1](screenshots/screenshot9.png)
 
-Colocando senha emvários pdfs ao mesmo tempo
+Colocando senha em vários pdfs ao mesmo tempo
