@@ -1,20 +1,38 @@
 # Requisitos:
-aws-cli/1.22.34 Python/3.10.12 Linux/6.8.0-60-generic botocore/1.23.34
 Docker version 28.2.2, build e6534b4
 node v22.16.0
 
-# Depois de instalar o aws-cli
-use o comando:
+# Como iniciar o projeto
+
+1. crie um .env com base no .env.example
+2. execute o script na pasta raiz chamado script.sh com o comando:
+
+```command
+    bash script.sh
 ```
-aws configure
+esse script preparará as funções lambda e o front, depois disso irá levantar o docker-compose com todos os serviços
 
-```
+3. processe seus pdfs ou arquivos
 
-e preencha:
-AWS Access Key ID: test
-AWS Secret Access Key: test
-Default region name: us-east-1
-Default output format: json
+# Estrutura do projeto:
 
-após isso execute o script na pasta raiz script.sh
-ele irá levantar o docker, esperar o localstack ter inciado e enviar a função que estão em function.zip para o localstack, depois disso irá entrar checar se o front tem a pasta node_modules e se não tiver irá instalar as dependencias do front e inciar o mesmo.
+app
+    - file-cleaner <- lambda para limpar arquivos que estão no fileserver
+    - image-processor <- lambda para transformar imagens de colorido para preto em branco
+    - pdf-compression <- backend para processar pdfs e comprimir pdfs
+    - pdf-merger <- lambda para juntar pdfs
+    - pdf-protector <- lambda para por senhas em pdfs
+    - pdf-splitter <- lambda para separar pdfs
+    - pdf-to-word <- backend para transformar pdfs em word
+docker-compose.yml
+ihatepdf <- frontend da aplicação
+init-localstack.sh
+readme.md
+script.sh
+
+# Foi utilizado neste projeto:
+
+LocalStack: Simulador da AWS local
+NextJS: Frontend com base em React
+Python: Algumas funções lambda e 2 backends usam a linguagem
+JavaScript: Algumas funções lambda utilizam

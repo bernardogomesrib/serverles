@@ -34,10 +34,10 @@ services:
       - S3_ENDPOINT_URL=http://localstack:4566
       - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
   pdf-to-word-api:
-    build: ./app/pdf-to-word # Aponta para a nova pasta
+    build: ./app/pdf-to-word
     image: python-ocr-word-api
     ports:
-      - "5002:5000" # Usa uma nova porta na sua máquina
+      - "5002:5000"
     depends_on:
       - localstack
     environment:
@@ -47,3 +47,10 @@ services:
       - S3_BUCKET_NAME=${BUCKET_NAME}
       - S3_ENDPOINT_URL=http://localstack:4566
       - PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME}
+  
+  front-nest:
+    build: ./ihatepdf
+    ports:
+      - "3000:3000"
+    environment:
+      - PUBLIC_IP=${PUBLIC_HOSTNAME}

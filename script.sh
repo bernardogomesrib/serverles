@@ -1,71 +1,46 @@
 #!/bin/bash
 
-docker-compose up -d --build
+PASTAS=("app/file-cleaner" "app/image-processor" "app/pdf-merger" "app/pdf-splitter" "ihatepdf")
+HOME_DIR=$(pwd)
+for pasta in "${PASTAS[@]}"; do
+    echo "Processing $pasta"
+    cd "$HOME_DIR/$pasta" || { echo "Failed to change directory to $pasta"; continue; }
+    if [ -f "package.json" ]; then
+        if [ -d "node_modules" ]; then
+            echo "node_modules already exists, skipping installation"
+        else
+            echo "Installing node modules for $pasta"
+            npm install
+        fi
 
-set -e
-
-echo "Aguardando LocalStack iniciar Lambda..."
-until aws --endpoint-url=http://localhost:4566 lambda list-functions; do
-  sleep 2
+    else
+        echo "No package.json found in $pasta"
+    fi
+    cd "$HOME_DIR" || { echo "Failed to return to home directory"; exit 1; }
+    echo "Finished processing $pasta"
+    echo "----------------------------------------"
 done
-
-echo "Criando função Lambda bw-converter..."
-aws --endpoint-url=http://localhost:4566 lambda create-function \
-  --function-name pdf-compression \
-  --runtime python3.11 \
-  --handler main.handler \
-  --role arn:aws:iam::000000000000:role/lambda-role \
-  --zip-file fileb://app/pdf-compression/function.zip \
-  --region us-east-1 \
-  --layers arn:aws:lambda:us-east-1:764866452798:layer:ghostscript:18 \
-
-aws --endpoint-url=http://localhost:4566 lambda delete-function \
-  --function-name pdf-compression
-
+  echo "Compilling frontend"
+  cd "$HOME_DIR/ihatepdf" || { echo "Failed to change directory to frontend"; exit 1; }
+  if [ ! -d "$HOME_DIR/ihatepdf/.next/static/chunks/pages/" ]; then
+      npm run build || { echo "Failed to build frontend"; exit 1; }
+      echo "Frontend compiled successfully"
+  else
+      echo "compiled frontend already exists, skipping build"
+      echo "If you want to recompile, delete the .next folder in ihatepdf"
+      echo "and run this script again"
+  fi
+  
+  cd "$HOME_DIR" || { echo "Failed to return to home directory"; exit 1; }
 
 
 
-echo "Função Lambda criada!"
-
-echo "Iniciando front-end..."
-
-
-if [ ! -d "front/node_modules" ]; then
-  cd front
-  npm install
+  # Verifica se já existe um container rodando com nome que contenha "serverles-front-nest"
+if docker ps --format '{{.Names}}' | grep -q "serverles-front-nest"; then
+    echo "O container serverles-front-nest já está rodando. Projeto já está em execução."
+else
+    docker compose up -d || { echo "Failed to start Docker containers"; exit 1; }
+    echo "Docker containers iniciados com sucesso."
 fi
 
-cd ..
-
-node front/index.js
-
-# Cria bucket público
-#aws --endpoint-url=http://localhost:4566 s3api create-bucket --bucket meu-bucket-publico --region us-east-1
-
-# Deixa o bucket público (no LocalStack, é só para simular)
-#aws --endpoint-url=http://localhost:4566 s3api put-bucket-acl --bucket meu-bucket-publico --acl public-read
-
-
-# Cria função Lambda para converter imagem em PDF
-#aws --endpoint-url=http://localhost:4566 lambda create-function \
-#  --function-name img-to-pdf \
-#  --runtime nodejs18.x \
-#  --handler index.handler \
-#  --role arn:aws:iam::000000000000:role/lambda-role \
-#  --zip-file fileb:///app/img-to-pdf.zip \
-#  --region us-east-1
-
-# Cria função Lambda para deletar objeto
-#aws --endpoint-url=http://localhost:4566 lambda create-function \
-#  --function-name delete-object \
-#  --runtime nodejs18.x \
-#  --handler index.handler \
-#  --role arn:aws:iam::000000000000:role/lambda-role \
-#  --zip-file fileb:///app/delete-object.zip \
-#  --region us-east-1
-
-# (Opcional) Configura trigger S3 -> Lambda (exemplo para upload)
-#aws --endpoint-url=http://localhost:4566 lambda create-event-source-mapping \
-#  --function-name img-to-pdf \
-#  --event-source-arn arn:aws:s3:::meu-bucket-publico \
-#  --starting-position LATEST
+echo "All tasks completed successfully"
