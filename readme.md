@@ -15,21 +15,21 @@ esse script preparará as funções lambda e o front, depois disso irá levantar
 3. processe seus pdfs ou arquivos
 
 # Estrutura do projeto:
-
-app
-    - file-cleaner <- lambda para limpar arquivos que estão no fileserver
-    - image-processor <- lambda para transformar imagens de colorido para preto em branco
-    - pdf-compression <- backend para processar pdfs e comprimir pdfs
-    - pdf-merger <- lambda para juntar pdfs
-    - pdf-protector <- lambda para por senhas em pdfs
-    - pdf-splitter <- lambda para separar pdfs
-    - pdf-to-word <- backend para transformar pdfs em word
+```
+app/
+  file-cleaner      # lambda para limpar arquivos que estão no fileserver
+  image-processor   # lambda para transformar imagens de colorido para preto em branco
+  pdf-compression   # backend para processar pdfs e comprimir pdfs
+  pdf-merger        # lambda para juntar pdfs
+  pdf-protector     # lambda para por senhas em pdfs
+  pdf-splitter      # lambda para separar pdfs
+  pdf-to-word       # backend para transformar pdfs em word
 docker-compose.yml
-ihatepdf <- frontend da aplicação
-init-localstack.sh
-readme.md
-script.sh
-
+ihatepdf/           # frontend da aplicação
+init-localstack.sh  # script de inicialização utilizado pelo LocalStack
+readme.md           # < Você está aqui
+script.sh           # Script para iniciar o projeto
+```
 # Foi utilizado neste projeto:
 
 LocalStack: Simulador da AWS local
