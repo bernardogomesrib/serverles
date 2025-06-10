@@ -185,3 +185,16 @@ const payload = {
   const responsePayload = await result.json();
   return responsePayload as LambdaResponse;
 }
+
+
+export async function protectPDFs(
+  files: PdfFilePayload[],
+  password: string
+):Promise<LambdaResponse> {
+
+  const payload = {
+    files,
+    password,
+  };
+  return invokeLambda("pdf-protector", payload);
+}

@@ -198,7 +198,7 @@ export default function SplitPdfPage() {
                 return (
                     <div className="flex h-full w-full">
                         {/* Visualizador de Páginas */}
-                        <div className="flex-1 p-4 overflow-y-auto bg-gray-100">
+                        <div className="flex-1 p-4 overflow-y-auto bg-gray-100 h-full">
                             {mode === 'extract' && (
                                 <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                                     {pages.map(({ pageNumber }) => (
@@ -210,7 +210,7 @@ export default function SplitPdfPage() {
                                 </div>
                             )}
                             {mode === 'range' && (
-                                <div className="space-y-6">
+                                <div className="space-y-6 h-full">
                                     {ranges.map((range, index) => (
                                         <div key={range.id} className="p-4 border-2 border-dashed rounded-lg">
                                             <h3 className="font-semibold mb-4 text-left">Intervalo {index + 1}</h3>
@@ -225,8 +225,8 @@ export default function SplitPdfPage() {
                             )}
                         </div>
 
-                        {/* Painel de Controlo */}
-                        <aside className="w-80 border-l bg-white flex flex-col p-4">
+                        {/* Painel de Controle */}
+                        <aside className="w-80 border-l bg-white flex flex-col p-4" style={{ minHeight: '80vh' }}>
                             <h2 className="text-4xl font-bold text-gray-800 text-center">Dividir PDF</h2>
                             <div className="flex justify-center my-4 border border-gray-200 rounded-lg p-1 text-gray-800">
                                 <button onClick={() => setMode('range')} className={`flex-1 py-2 text-sm rounded-md ${mode === 'range' ? 'bg-gray-200 font-semibold' : ''}`}>Por Intervalo</button>

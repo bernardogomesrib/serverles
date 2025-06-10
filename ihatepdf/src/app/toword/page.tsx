@@ -239,7 +239,7 @@ export default function MergePdfPage() {
                             {uiState === 'merging' && (<div className="flex items-center justify-center bg-gray-700 text-white font-bold text-lg px-8 py-4 rounded-lg"><Loader2 className="animate-spin mr-3" size={24} />A converter PDFs...</div>)}
                             {uiState === 'completed' && mergedUrl && (<div>
                                 <button className='bg-red-600 text-white font-bold text-lg px-8 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50' onClick={handleReset}>Converter outros</button>
-                                <a href={mergedUrl}   download="merged.pdf"
+                                <a href={mergedUrl}   download
                                 target="_blank"
                                 rel="noopener noreferrer" className="bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-green-700"><Download className="inline-block mr-2" /> Baixar PDF</a>
                             </div>)}

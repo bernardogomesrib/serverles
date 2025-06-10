@@ -24,7 +24,14 @@ export default function MergePdfPage() {
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const pdfjsLibRef = useRef<typeof import('pdfjs-dist') | null>(null); // Ref para guardar a biblioteca carregada dinamicamente
-
+    const handleReset = () => {
+        setFiles([]);
+        setUiState('initial');
+        setMergedUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    }
     // --- Carregamento dinâmico da biblioteca PDF.js ---
     useEffect(() => {
         const loadPdfJs = async () => {
@@ -199,9 +206,13 @@ export default function MergePdfPage() {
                         <div className="max-w-7xl mx-auto flex justify-end">
                             {uiState === 'filesSelected' && (<button onClick={handleMerge} disabled={files.length < 2} className="bg-red-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-red-700 disabled:opacity-50">Juntar PDF</button>)}
                             {uiState === 'merging' && (<div className="flex items-center justify-center bg-gray-700 text-white font-bold text-lg px-8 py-4 rounded-lg"><Loader2 className="animate-spin mr-3" size={24} />A juntar PDFs...</div>)}
-                            {uiState === 'completed' && mergedUrl && (<a href={mergedUrl}   download="merged.pdf"
+                            {uiState === 'completed' && mergedUrl && (<div>
+                                <button className='bg-red-600 text-white font-bold text-lg px-8 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50' onClick={handleReset}>Juntar outros</button>
+                                <a href={mergedUrl}   download
                                 target="_blank"
-                                rel="noopener noreferrer" className="bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-green-700"><Download className="inline-block mr-2" /> Baixar PDF</a>)}
+                                rel="noopener noreferrer" className="bg-green-600 text-white font-bold text-lg px-8 py-4 rounded-lg hover:bg-green-700"><Download className="inline-block mr-2" /> Baixar PDF</a>
+                            </div>
+                                )}
                         </div>
                     </div>
                 </div>

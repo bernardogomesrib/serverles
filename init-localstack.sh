@@ -2,9 +2,7 @@
 set -e
 
 ENDPOINT_URL=http://localhost:4566
-# Usando o nome da sua pasta para a função de compressão
-COMPRESSION_FUNCTION_NAME="pdf-compression"
-COMPRESSION_APP_DIR="/app/$COMPRESSION_FUNCTION_NAME"
+
 
 echo "Waiting for AWS services to be ready..."
 until awslocal s3api list-buckets --endpoint-url="$ENDPOINT_URL" >/dev/null 2>&1; do
@@ -22,6 +20,30 @@ awslocal s3api put-bucket-policy --bucket "${BUCKET_NAME:-processing-results}" -
     "Version": "2012-10-17",
     "Statement": [ { "Sid": "PublicReadGetObject", "Effect": "Allow", "Principal": "*", "Action": "s3:GetObject", "Resource": "arn:aws:s3:::'"${BUCKET_NAME:-processing-results}"'/*" } ]
 }'
+
+cd "/app/pdf-protector"
+rm -rf package function.zip
+mkdir -p package
+
+echo "Installing Python dependencies ..."
+pip install -r requirements.txt -t ./package --quiet
+
+cp main.py ./package/
+cd package
+zip -qr ../function.zip .
+cd ..
+
+awslocal lambda create-function \
+    --function-name pdf-protector \
+    --runtime python3.11 \
+    --role arn:aws:iam::000000000000:role/lambda-ex \
+    --handler main.handler \
+    --zip-file fileb://function.zip \
+    --timeout 90 \
+    --memory-size 1024 \
+    --environment "Variables={BUCKET_NAME=${BUCKET_NAME:-processing-results},PUBLIC_HOSTNAME=${PUBLIC_HOSTNAME},LOCALSTACK_HOSTNAME=${LOCALSTACK_HOSTNAME:-localhost},EDGE_PORT=${EDGE_PORT:-4566}}" \
+    --endpoint-url="$ENDPOINT_URL"
+rm -rf package function.zip
 
 
 echo "Creating image processor Lambda function..."

@@ -8,8 +8,8 @@ const tools = [
   { link: "/dividir", name: 'Dividir PDF', icon: '/icons/split-pdf.png', description: 'Separe uma ou várias páginas de seu PDF.' },
   { link: "/comprimir", name: 'Comprimir PDF', icon: '/icons/compress-pdf.png', description: 'Reduza o tamanho do arquivo enquanto otimiza para máxima qualidade.' },
   { link: "/toword", name: 'PDF para Word', icon: '/icons/pdf-to-word.png', description: 'Converta seus PDFs para documentos WORD editáveis.' },
+  { link: "/proteger", name: 'Colocar Senha', icon: '/icons/protect-pdf.png', description: 'Proteja os seus PDFs com senha.' },
   { link: "/topowerpoint", name: 'PDF para PowerPoint', icon: 'globe.svg', description: 'Converta PDFs para apresentações PPTX editáveis.' },
-  { link: "/toexcel", name: 'PDF para Excel', icon: 'globe.svg', description: 'Extraia dados diretamente de PDFs para planilhas de EXCEL.' },
   { link: "/topdf", name: 'Word para PDF', icon: 'globe.svg', description: 'Converta documentos WORD para PDF.' },
   { link: "/ppttopdf", name: 'PowerPoint para PDF', icon: 'globe.svg', description: 'Converta apresentações PPTX para PDF.' },
 ];
