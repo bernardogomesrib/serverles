@@ -41,6 +41,25 @@ if docker ps --format '{{.Names}}' | grep -q "serverles-front-nest"; then
 else
     docker compose up -d || { echo "Failed to start Docker containers"; exit 1; }
     echo "Docker containers iniciados com sucesso."
+
+  # Aguarda o LocalStack ficar pronto monitorando os logs
+  echo "Aguardando o LocalStack iniciar (procurando por 'AWS resources setup complete! 🚀' ou 'Ready.')..."
+  LOCALSTACK_ID=$(docker ps --filter "name=localstack" --format "{{.ID}}")
+  while true; do
+      LOGS=$(docker logs --tail 2 "$LOCALSTACK_ID" 2>&1)
+      echo "$LOGS"
+      if echo "$LOGS" | grep -q "AWS resources setup complete! 🚀"; then
+          break
+      fi
+      if echo "$LOGS" | grep -q "Ready."; then
+          break
+      fi
+      sleep 2
+  done
+
 fi
+
+
+
 
 echo "All tasks completed successfully"
